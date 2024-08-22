@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial hc12(0, 1); //TX,RX
+SoftwareSerial hc12(2, 3); // TX, RX
 
 void setup() {
   Serial.begin(9600);
@@ -8,11 +8,8 @@ void setup() {
 }
 
 void loop() {
-  hc12.print(1);
-  hc12.println("");
-
-  Serial.print(1);
-  Serial.println("");
-
-  delay(10);
+  while (Serial.available()) {
+    char sendChar = Serial.read(); // 한 문자씩 읽기
+    hc12.print(sendChar);          // 한 문자씩 송신
+  }
 }
