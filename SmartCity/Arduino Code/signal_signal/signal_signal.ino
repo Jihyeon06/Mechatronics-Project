@@ -2,9 +2,11 @@
 
 SoftwareSerial hc12(2, 3); // TX, RX
 
-const int signal_r_light= 4;
-const int signal_y_light= 5;
-const int signal_g_light= 6;
+const int signal_r_light= 9;
+const int signal_y_light= 10;
+const int signal_g_light= 11;
+
+const int signal_power_Pin = A0;
 
 void setup() {
   Serial.begin(9600);
@@ -16,7 +18,8 @@ void setup() {
 }
 
 void loop() {
-  
+  int signal_power_Value = map(analogRead(signal_power_Pin), 0, 1024, 0, 255);
+  Serial.println(signal_power_Value);
   /*
   digitalWrite(signal_r_light, HIGH);
   digitalWrite(signal_y_light, LOW);
@@ -33,27 +36,26 @@ void loop() {
 while (hc12.available()) {
     char receivedChar = hc12.read(); // 한 문자씩 읽기
     receivedData += receivedChar;    // 문자열에 문자를 추가
-
     // 문자열이 "red", "green", "yellow", "off" 중 하나일 경우 처리
     if (receivedData.endsWith("red")) {
-        digitalWrite(signal_r_light, HIGH);
-        digitalWrite(signal_g_light, LOW);
-        digitalWrite(signal_y_light, LOW);
+        analogWrite(signal_r_light, signal_power_Value);
+        analogWrite(signal_g_light, 0);
+        analogWrite(signal_y_light, 0);
         receivedData = ""; // 처리 후 문자열 초기화
     } else if (receivedData.endsWith("green")) {
-        digitalWrite(signal_r_light, LOW);
-        digitalWrite(signal_g_light, HIGH);
-        digitalWrite(signal_y_light, LOW);
+        analogWrite(signal_r_light, 0);
+        analogWrite(signal_g_light, signal_power_Value);
+        analogWrite(signal_y_light, 0);
         receivedData = ""; // 처리 후 문자열 초기화
     } else if (receivedData.endsWith("yellow")) {
-        digitalWrite(signal_r_light, LOW);
-        digitalWrite(signal_g_light, LOW);
-        digitalWrite(signal_y_light, HIGH);
+        analogWrite(signal_r_light, 0);
+        analogWrite(signal_g_light, 0);
+        analogWrite(signal_y_light, signal_power_Value);
         receivedData = ""; // 처리 후 문자열 초기화
     } else if (receivedData.endsWith("off")) {
-        digitalWrite(signal_r_light, LOW);
-        digitalWrite(signal_g_light, LOW);
-        digitalWrite(signal_y_light, LOW);
+        analogWrite(signal_r_light, 0);
+        analogWrite(signal_g_light, 0);
+        analogWrite(signal_y_light, 0);
         receivedData = ""; // 처리 후 문자열 초기화
     }
 
